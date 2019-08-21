@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Wonder Shaper
 #
 # Set the following values to somewhat less than your actual download
@@ -143,20 +143,20 @@ then
     # high prio class 1:10:
 
     tc class add dev $IFACE parent 1:1 classid 1:10 htb \
-        rate $[40*$USPEED/100]kbit ceil $[95*$USPEED/100]kbit \
+        rate $((40*$USPEED/100))kbit ceil $((95*$USPEED/100))kbit \
         prio 1 $COMMONOPTIONS
 
     # bulk and default class 1:20 - gets slightly less traffic,
     #  and a lower priority:
 
     tc class add dev $IFACE parent 1:1 classid 1:20 htb \
-        rate $[40*$USPEED/100]kbit ceil $[95*$USPEED/100]kbit \
+        rate $((40*$USPEED/100))kbit ceil $((95*$USPEED/100))kbit \
         prio 2 $COMMONOPTIONS
 
     # 'traffic we hate'
 
     tc class add dev $IFACE parent 1:1 classid 1:30 htb \
-        rate $[20*$USPEED/100]kbit ceil $[90*$USPEED/100]kbit \
+        rate $((20*$USPEED/100]kbit ceil $((90*$USPEED/100))kbit \
         prio 3 $COMMONOPTIONS
 
     # all get Stochastic Fairness:
