@@ -12,7 +12,6 @@
 # See the ChangeLog for information on the individual contributions of the authors.
 
 QUANTUM=6000
-BURST=15k
 COMMONOPTIONS="$COMMONOPTIONS"
 VERSION=1.4
 
@@ -73,14 +72,14 @@ if [ "$MODE" = "presets" ]
 then
     if [ -f /etc/conf.d/wondershaper.conf ]
     then
-	source /etc/conf.d/wondershaper.conf
+	. /etc/conf.d/wondershaper.conf
     else
 	echo "/etc/conf.d/wondershaper.conf not found"
 	exit 1
     fi
 fi
 
-if [[ ! -z $MODE ]] && [[ -z $IFACE ]]
+if [ -n "$MODE" ] && [ -z "$IFACE" ]
 then
     echo "Please supply the adapter name for the mode."
     echo ""
@@ -104,7 +103,7 @@ then
     exit
 fi
 
-if ( [[ -z $DSPEED ]] && [[ -z $USPEED ]] ) || [[ -z $IFACE ]]
+if ( [ -z "$DSPEED" ] && [ -z "$USPEED" ] ) || [ -z "$IFACE" ]
 then
     usage
     exit 1
@@ -133,7 +132,7 @@ tc qdisc add dev $IFACE root handle 1: htb \
 # shape everything at $USPEED speed - this prevents huge queues in your
 # DSL modem which destroy latency:
 # main class
-if [[ ! -z $USPEED ]]
+if [ -n "$USPEED" ]
 then
 
     tc class add dev $IFACE parent 1: classid 1:1 htb \
@@ -156,7 +155,7 @@ then
     # 'traffic we hate'
 
     tc class add dev $IFACE parent 1:1 classid 1:30 htb \
-        rate $((20*$USPEED/100]kbit ceil $((90*$USPEED/100))kbit \
+        rate $((20*$USPEED/100))kbit ceil $((90*$USPEED/100))kbit \
         prio 3 $COMMONOPTIONS
 
     # all get Stochastic Fairness:
@@ -221,7 +220,7 @@ fi
 # ISPs tend to have *huge* queues to make sure big downloads are fast
 #
 # attach ingress policer:
-if [[ ! -z $DSPEED ]]
+if [ -n "$DSPEED" ]
 then
 
     # Add the IFB interface
